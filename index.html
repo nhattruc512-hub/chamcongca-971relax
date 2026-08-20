@@ -9,7 +9,7 @@
   <title>971 Relax Court · Nhân viên</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles.css?v=10" />
+  <link rel="stylesheet" href="styles.css?v=12" />
 </head>
 <body>
 <header class="hero">
@@ -38,9 +38,13 @@
       <div><div class="kicker">CHẤM CÔNG</div><h2>Chấm công nhân viên</h2></div>
       <div id="clockNow" class="clock">--:--:--</div>
     </div>
-    <div class="attendance-top">
+    <div class="attendance-top" style="display:block">
       <label class="grow"><span>Tên nhân viên</span><input id="attendanceEmployee" class="input" maxlength="60" placeholder="Nhập tên nhân viên"></label>
-      <button id="attendanceBtn" class="punch">CHẤM<br>CÔNG</button>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+        <button id="attendanceInBtn" class="btn primary" type="button">CHẤM CÔNG VÀO</button>
+        <button id="attendanceOutBtn" class="btn secondary" type="button">CHẤM CÔNG RA</button>
+      </div>
+      <button id="attendanceBtn" class="hidden" type="button" aria-hidden="true" tabindex="-1"></button>
     </div>
     <div id="attendancePreview" class="notice">Đang xác định ca…</div>
     <div class="subsection-head">
@@ -117,10 +121,11 @@
   </section>
 </main>
 <div id="toast" class="toast"></div>
-<script src="app.js?v=10"></script>
-<script src="revenue-delete.js?v=10"></script>
-<script src="manager-close.js?v=10"></script>
-<script src="shift-controls.js?v=10"></script>
-<script src="manager-export.js?v=10"></script>
+<script src="app.js?v=12"></script>
+<script src="attendance-io.js?v=12"></script>
+<script src="revenue-delete.js?v=12"></script>
+<script src="manager-close.js?v=12"></script>
+<script src="shift-controls.js?v=12"></script>
+<script src="manager-export.js?v=12"></script>
 </body>
 </html>
