@@ -1,6 +1,7 @@
-// Allow staff to remove mistakenly entered revenue. Deletions are synced server-side and audited by DB triggers.
+// Allow staff to remove mistakenly entered revenue. Active-shift deletion requires shift staff ownership or manager PIN.
 (function(){
   let outsideRows=[];
+  const DELETE_ACTIVE_ENDPOINT='https://dinqlgaveujdeyisgpty.supabase.co/functions/v1/delete-active-revenue-entry';
   const oldRenderActive=renderActive;
   renderActive=function(){
     oldRenderActive();
@@ -17,13 +18,31 @@
     document.querySelectorAll('[data-active-revenue-delete]').forEach(b=>b.onclick=()=>deleteActiveRevenue(b.dataset.activeRevenueDelete));
   };
 
+  async function callDeleteActive(entryId,payload={}){
+    const r=await fetch(DELETE_ACTIVE_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({entryId:String(entryId),...payload})});
+    const d=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(d.error||`Lỗi ${r.status}`);
+    return d;
+  }
+
   async function deleteActiveRevenue(id){
     const e=(active?.entries||[]).find(x=>String(x.id)===String(id));
     if(!e)return toast('Không tìm thấy khoản doanh thu');
     const parts=[];if(e.transfer)parts.push(`CK ${money(e.transfer)}`);if(e.cash)parts.push(`TM ${money(e.cash)}`);if(e.courtRevenue)parts.push(`Sân ${money(e.courtRevenue)}`);if(e.waterRevenue)parts.push(`Nước ${money(e.waterRevenue)}`);
+    let auth={};
+    if(typeof isOwner==='function'&&isOwner()){
+      const o=typeof owner==='function'?owner():null;
+      if(!o?.token)return toast('Không xác định được quyền của nhân viên trong ca');
+      auth={token:o.token};
+    }else{
+      const pin=prompt('Nhập PIN quản lý để xóa khoản trong ca');
+      if(pin===null)return;
+      if(!pin.trim())return toast('Chưa nhập PIN quản lý');
+      auth={pin:pin.trim()};
+    }
     if(!confirm(`Xóa khoản đã cộng nhầm?\n${parts.join(' · ')}\n\nTổng doanh thu của ca sẽ tự trừ lại.`))return;
     try{
-      const d=await activeApi({action:'public_delete_entry',entryId:String(id)});
+      const d=await callDeleteActive(id,auth);
       active=rowToActive(d.active);renderActive();await refreshSummary();if(managerPin)refreshManager();toast('Đã xóa khoản doanh thu và trừ lại tổng');
     }catch(err){toast(err.message||'Không xóa được doanh thu')}
   }
@@ -64,7 +83,6 @@
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootDelete);else bootDelete();
 })();
 
-// Manager close-active-shift control is kept separate from the main app for easy rollback.
 (function(){
   if(document.querySelector('script[data-manager-close]'))return;
   const s=document.createElement('script');s.src='./manager-close.js?v=1';s.dataset.managerClose='1';document.body.appendChild(s);
