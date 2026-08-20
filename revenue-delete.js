@@ -63,3 +63,9 @@
   function bootDelete(){mountOutsideHistory();refreshOutsideRevenue();if(active)renderActive()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootDelete);else bootDelete();
 })();
+
+// Manager close-active-shift control is kept separate from the main app for easy rollback.
+(function(){
+  if(document.querySelector('script[data-manager-close]'))return;
+  const s=document.createElement('script');s.src='./manager-close.js?v=1';s.dataset.managerClose='1';document.body.appendChild(s);
+})();
