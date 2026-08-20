@@ -9,7 +9,7 @@
   <title>971 Relax Court - Nhân viên</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles.css?v=1" />
+  <link rel="stylesheet" href="styles.css?v=2" />
 </head>
 <body>
 <header class="hero"><div class="wrap hero-in"><div><div class="eyebrow">971 RELAX COURT</div><h1>Quản lý ca nhân viên</h1><div id="todayLabel" class="sub"></div></div><button id="installBtn" class="btn ghost hidden">Cài app</button></div></header>
@@ -42,7 +42,7 @@
       <div><span>Doanh thu sân</span><b id="liveCourt">0 ₫</b></div><div><span>Doanh thu nước</span><b id="liveWater">0 ₫</b></div>
     </div>
     <div class="totals"><div><span>Tổng tiền thu</span><b id="liveCollected">0 ₫</b></div><div><span>Tổng doanh thu</span><b id="liveRevenue">0 ₫</b></div><div><span>Chênh lệch</span><b id="liveDiff">0 ₫</b></div></div>
-    <div class="section-gap"><div class="kicker">DIỄN BIẾN CA CÔNG KHAI</div><p class="muted">Mọi máy đều xem được người nhập, thời gian và khoản tiền.</p><div id="activeEntries" class="list"></div><div id="activeEntriesEmpty" class="empty">Chưa có khoản doanh thu nào trong ca.</div></div>
+    <div class="section-gap"><div class="kicker">DIỄN BIẾN CA CÔNG KHAI</div><p class="muted">Mọi máy đều xem được người nhập, thời gian và khoản tiền. Khoản nhập nhầm có thể xóa.</p><div id="activeEntries" class="list"></div><div id="activeEntriesEmpty" class="empty">Chưa có khoản doanh thu nào trong ca.</div></div>
     <button id="finishShiftBtn" class="btn danger block hidden">KẾT THÚC CA</button>
   </section>
 
@@ -76,13 +76,14 @@
     <div id="managerPanel" class="hidden">
       <div class="manager-bar"><b>Khu vực quản lý</b><button id="managerLockBtn" class="btn ghost">Khóa</button></div>
       <div class="filters"><input id="managerDate" type="date" class="input"><select id="managerShift" class="input"><option value="all">Tất cả ca</option><option value="ca1">Ca 1</option><option value="ca2">Ca 2</option><option value="ca3">Ca 3</option></select></div>
-      <div class="manager-section"><div class="kicker">NHẬT KÝ HOẠT ĐỘNG</div><p class="muted">Cộng doanh thu, ca, khách nợ, chấm công và thao tác quản lý.</p><div id="auditList" class="list"></div><div id="auditEmpty" class="empty hidden">Chưa có nhật ký trong ngày này.</div></div>
+      <div class="manager-section"><div class="kicker">NHẬT KÝ HOẠT ĐỘNG</div><p class="muted">Cộng/xóa doanh thu, ca, khách nợ, chấm công và thao tác quản lý.</p><div id="auditList" class="list"></div><div id="auditEmpty" class="empty hidden">Chưa có nhật ký trong ngày này.</div></div>
       <div class="manager-section"><div class="kicker">CA ĐÃ KẾT THÚC</div><div id="managerShiftList" class="list"></div><div id="managerShiftEmpty" class="empty hidden">Không có ca phù hợp.</div></div>
       <div class="manager-section"><div class="kicker">LỊCH SỬ CHẤM CÔNG</div><p class="muted">Xóa chấm công sẽ xóa toàn bộ giờ chấm và vị trí GPS của bản ghi.</p><div id="managerAttendanceList" class="list"></div><div id="managerAttendanceEmpty" class="empty hidden">Không có chấm công phù hợp.</div></div>
     </div>
   </section>
 </main>
 <div id="toast" class="toast"></div>
-<script src="app.js?v=1"></script>
+<script src="app.js?v=2"></script>
+<script src="revenue-delete.js?v=2"></script>
 </body>
 </html>
