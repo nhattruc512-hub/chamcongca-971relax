@@ -33,8 +33,8 @@
     document.querySelectorAll('.shift').forEach(b=>b.disabled=running);
     const startBtn=el('startShiftBtn');if(startBtn&&running)startBtn.disabled=true;
     if(notice){
-      notice.classList.toggle('hidden',!running);
-      notice.textContent=running?`🔒 ${active.employee} đang làm ${active.shiftName}. Ca 1 / Ca 2 / Ca 3 vẫn hiển thị nhưng bị khóa cho đến khi ca này kết thúc.`:'';
+      notice.classList.add('hidden');
+      notice.textContent='';
     }
     const own=running&&typeof isOwner==='function'&&isOwner();
     if(finish)finish.classList.toggle('hidden',!own);
