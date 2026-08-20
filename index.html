@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0f766e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="971 Nhân viên" />
+  <title>971 Relax Court - Nhân viên</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css?v=1" />
+</head>
+<body>
+<header class="hero"><div class="wrap hero-in"><div><div class="eyebrow">971 RELAX COURT</div><h1>Quản lý ca nhân viên</h1><div id="todayLabel" class="sub"></div></div><button id="installBtn" class="btn ghost hidden">Cài app</button></div></header>
+<main class="wrap grid">
+  <section class="card attendance-card">
+    <div class="head"><div><div class="kicker">CHẤM CÔNG</div><h2>Chấm công nhân viên</h2><p class="muted">Lưu giờ chấm và vị trí GPS lên hệ thống chung.</p></div><div id="clockNow" class="clock">--:--:--</div></div>
+    <div class="attendance-top"><label class="grow"><span>Tên nhân viên</span><input id="attendanceEmployee" class="input" maxlength="60" placeholder="Nhập tên nhân viên"></label><button id="attendanceBtn" class="punch">CHẤM<br>CÔNG</button></div>
+    <div id="attendancePreview" class="notice">Đang xác định ca…</div>
+    <div class="head compact"><div><div class="kicker">LỊCH SỬ CHẤM CÔNG</div><p class="muted">Dữ liệu chung trên tất cả thiết bị.</p></div><input id="attendanceDate" type="date" class="input date"></div>
+    <div id="attendanceList" class="list"></div><div id="attendanceEmpty" class="empty hidden">Chưa có chấm công trong ngày này.</div>
+  </section>
+
+  <section id="quickRevenueCard" class="card">
+    <div class="head"><div><div class="kicker">GHI NHẬN DOANH THU</div><h2>Nhập doanh thu</h2><p class="muted">Ai mở link cũng có thể nhập. Không cần bắt đầu ca.</p></div><span id="revenueMode" class="badge">Đang kiểm tra</span></div>
+    <div class="money-grid">
+      <label><span>🏦 Chuyển khoản</span><input id="qTransfer" class="input money" inputmode="numeric" placeholder="0"></label>
+      <label><span>💵 Tiền mặt</span><input id="qCash" class="input money" inputmode="numeric" placeholder="0"></label>
+      <label><span>🏸 Doanh thu sân</span><input id="qCourt" class="input money" inputmode="numeric" placeholder="0"></label>
+      <label><span>🥤 Doanh thu nước</span><input id="qWater" class="input money" inputmode="numeric" placeholder="0"></label>
+    </div>
+    <button id="addRevenueBtn" class="btn primary block">+ CỘNG DOANH THU</button>
+  </section>
+
+  <section id="activeCard" class="card active hidden">
+    <div class="head"><div><div class="kicker">CA ĐANG HOẠT ĐỘNG</div><h2 id="activeTitle">Ca</h2><p id="activeMeta" class="muted"></p></div><span class="badge live">Đang làm</span></div>
+    <div id="activeLockNotice" class="notice"></div>
+    <div class="elapsed"><span>Thời gian đã làm</span><strong id="elapsed">00:00:00</strong></div>
+    <div class="summary-grid">
+      <div><span>Chuyển khoản</span><b id="liveTransfer">0 ₫</b></div><div><span>Tiền mặt</span><b id="liveCash">0 ₫</b></div>
+      <div><span>Doanh thu sân</span><b id="liveCourt">0 ₫</b></div><div><span>Doanh thu nước</span><b id="liveWater">0 ₫</b></div>
+    </div>
+    <div class="totals"><div><span>Tổng tiền thu</span><b id="liveCollected">0 ₫</b></div><div><span>Tổng doanh thu</span><b id="liveRevenue">0 ₫</b></div><div><span>Chênh lệch</span><b id="liveDiff">0 ₫</b></div></div>
+    <div class="section-gap"><div class="kicker">DIỄN BIẾN CA CÔNG KHAI</div><p class="muted">Mọi máy đều xem được người nhập, thời gian và khoản tiền.</p><div id="activeEntries" class="list"></div><div id="activeEntriesEmpty" class="empty">Chưa có khoản doanh thu nào trong ca.</div></div>
+    <button id="finishShiftBtn" class="btn danger block hidden">KẾT THÚC CA</button>
+  </section>
+
+  <section id="startCard" class="card">
+    <div class="head"><div><div class="kicker">BẮT ĐẦU LÀM VIỆC</div><h2>Chọn ca</h2><p class="muted">Toàn hệ thống chỉ được có 1 ca đang chạy.</p></div></div>
+    <label><span>Tên nhân viên</span><input id="employeeName" class="input" maxlength="60" placeholder="Nhập tên nhân viên"></label>
+    <div class="shift-grid"><button data-shift="ca1" class="shift">1<small>05:00 - 11:00</small></button><button data-shift="ca2" class="shift">2<small>14:00 - 18:00</small></button><button data-shift="ca3" class="shift">3<small>18:00 - 22:00</small></button></div>
+    <button id="startShiftBtn" class="btn primary block" disabled>BẮT ĐẦU CA</button>
+  </section>
+
+  <section class="card">
+    <div class="head compact"><div><div class="kicker">TỔNG HỢP NGÀY</div><h2>Doanh thu theo ngày</h2></div><input id="summaryDate" type="date" class="input date"></div>
+    <div class="summary-grid"><div><span>Chuyển khoản</span><b id="sumTransfer">0 ₫</b></div><div><span>Tiền mặt</span><b id="sumCash">0 ₫</b></div><div><span>Doanh thu sân</span><b id="sumCourt">0 ₫</b></div><div><span>Doanh thu nước</span><b id="sumWater">0 ₫</b></div></div>
+    <div class="grand"><span>TỔNG DOANH THU</span><strong id="sumRevenue">0 ₫</strong></div>
+  </section>
+
+  <section class="card">
+    <div class="head"><div><div class="kicker">KHÁCH NỢ</div><h2>Theo dõi công nợ</h2><p class="muted">Đồng bộ chung trên tất cả thiết bị.</p></div><div class="right"><small>TỔNG ĐANG NỢ</small><strong id="debtTotal">0 ₫</strong></div></div>
+    <div class="debt-grid"><label><span>Tên khách</span><input id="debtCustomer" class="input"></label><label><span>Nợ gì</span><input id="debtReason" class="input"></label><label><span>Tổng nợ</span><input id="debtAmount" class="input money" inputmode="numeric"></label></div>
+    <button id="addDebtBtn" class="btn primary block">+ THÊM KHÁCH NỢ</button><div id="debtList" class="list"></div><div id="debtEmpty" class="empty">Chưa có khách nợ.</div>
+  </section>
+
+  <section class="card">
+    <div class="head compact"><div><div class="kicker">LỊCH SỬ CA</div><h2>Theo dõi đối soát</h2></div></div>
+    <div class="filters"><input id="historyDate" type="date" class="input"><select id="historyShift" class="input"><option value="all">Tất cả ca</option><option value="ca1">Ca 1</option><option value="ca2">Ca 2</option><option value="ca3">Ca 3</option></select></div>
+    <div id="historyList" class="list"></div><div id="historyEmpty" class="empty hidden">Chưa có ca đã kết thúc.</div>
+  </section>
+
+  <section class="card manager-card">
+    <div class="head"><div><div class="kicker">QUẢN LÝ</div><h2>Kiểm tra hệ thống</h2><p class="muted">PIN quản lý dùng để xem nhật ký và xóa dữ liệu.</p></div><button id="managerOpenBtn" class="btn ghost">MỞ QUẢN LÝ</button></div>
+    <div id="managerPanel" class="hidden">
+      <div class="manager-bar"><b>Khu vực quản lý</b><button id="managerLockBtn" class="btn ghost">Khóa</button></div>
+      <div class="filters"><input id="managerDate" type="date" class="input"><select id="managerShift" class="input"><option value="all">Tất cả ca</option><option value="ca1">Ca 1</option><option value="ca2">Ca 2</option><option value="ca3">Ca 3</option></select></div>
+      <div class="manager-section"><div class="kicker">NHẬT KÝ HOẠT ĐỘNG</div><p class="muted">Cộng doanh thu, ca, khách nợ, chấm công và thao tác quản lý.</p><div id="auditList" class="list"></div><div id="auditEmpty" class="empty hidden">Chưa có nhật ký trong ngày này.</div></div>
+      <div class="manager-section"><div class="kicker">CA ĐÃ KẾT THÚC</div><div id="managerShiftList" class="list"></div><div id="managerShiftEmpty" class="empty hidden">Không có ca phù hợp.</div></div>
+      <div class="manager-section"><div class="kicker">LỊCH SỬ CHẤM CÔNG</div><p class="muted">Xóa chấm công sẽ xóa toàn bộ giờ chấm và vị trí GPS của bản ghi.</p><div id="managerAttendanceList" class="list"></div><div id="managerAttendanceEmpty" class="empty hidden">Không có chấm công phù hợp.</div></div>
+    </div>
+  </section>
+</main>
+<div id="toast" class="toast"></div>
+<script src="app.js?v=1"></script>
+</body>
+</html>
