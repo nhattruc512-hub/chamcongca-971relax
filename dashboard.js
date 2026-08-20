@@ -7,14 +7,16 @@
     v=String(v||'').trim();
     if(!v)return;
     const a=$id('attendanceEmployee'),e=$id('employeeName');
-    if(a)a.value=v;if(e)e.value=v;
+    if(a)a.value=v;
+    if(e)e.value=v;
     try{localStorage.setItem('r971_staff_employee_v1',v)}catch{}
   }
 
   function build(){
     const hero=document.querySelector('.hero');if(hero)hero.classList.add('dashboard-hero');
     const main=document.querySelector('main');if(!main)return;
-    dashboard=document.createElement('section');dashboard.id='appDashboard';dashboard.className='app-dashboard';
+    dashboard=document.createElement('section');
+    dashboard.id='appDashboard';dashboard.className='app-dashboard';
     dashboard.innerHTML=`
       <div class="dash-staff">
         <label for="homeEmployee">Tên nhân viên</label>
@@ -39,54 +41,134 @@
       </div>
       <div class="dash-bottom">
         <button class="dash-tile" type="button" data-report="1"><span class="dash-tile-icon">▥</span><strong>Báo cáo</strong><span class="dash-arrow">›</span></button>
-        <button class="dash-tile" type="button" data-open="managerSection"><span class="dash-tile-icon">⚙</span><strong>Quản lý</strong><span class="dash-arrow">›</span></button>
+        <button class="dash-tile" type="button" data-manager="1"><span class="dash-tile-icon">⚙</span><strong>Quản lý</strong><span class="dash-arrow">›</span></button>
       </div>`;
     main.before(dashboard);
 
-    backBar=document.createElement('div');backBar.className='dash-back dashboard-hidden';backBar.innerHTML='<button type="button" id="dashBackBtn">‹ Trang chính</button>';main.before(backBar);
+    backBar=document.createElement('div');
+    backBar.className='dash-back dashboard-hidden';
+    backBar.innerHTML='<button type="button" id="dashBackBtn">‹ Trang chính</button>';
+    main.before(backBar);
 
     panels.forEach(id=>{const el=$id(id);if(el)el.classList.add('app-panel-hidden')});
     const sectionAnchor=$id('shiftSection');if(sectionAnchor)sectionAnchor.classList.add('app-panel-hidden');
 
     const remembered=localStorage.getItem('r971_staff_employee_v1')||'';
-    const home=$id('homeEmployee');if(home){home.value=remembered;home.addEventListener('input',()=>syncName(home.value));}
+    const home=$id('homeEmployee');
+    if(home){home.value=remembered;home.addEventListener('input',()=>syncName(home.value))}
     syncName(remembered);
 
-    $id('homePunchIn')?.addEventListener('click',()=>{syncName($id('homeEmployee')?.value);$id('attendanceInBtn')?.click()});
-    $id('homePunchOut')?.addEventListener('click',()=>{syncName($id('homeEmployee')?.value);$id('attendanceOutBtn')?.click()});
+    $id('homePunchIn')?.addEventListener('click',()=>{
+      syncName($id('homeEmployee')?.value);
+      const btn=$id('attendanceInBtn');
+      if(btn)btn.click();else toast('Chức năng chấm công vào chưa sẵn sàng');
+    });
+    $id('homePunchOut')?.addEventListener('click',()=>{
+      syncName($id('homeEmployee')?.value);
+      const btn=$id('attendanceOutBtn');
+      if(btn)btn.click();else toast('Chức năng chấm công ra chưa sẵn sàng');
+    });
+
     dashboard.querySelectorAll('[data-open]').forEach(b=>b.addEventListener('click',()=>openPanel(b.dataset.open)));
-    dashboard.querySelector('[data-report]')?.addEventListener('click',()=>openReport());
+    dashboard.querySelector('[data-report]')?.addEventListener('click',openReport);
+    dashboard.querySelector('[data-manager]')?.addEventListener('click',openManager);
     $id('dashBackBtn')?.addEventListener('click',showHome);
-    updateHome();setInterval(updateHome,1000);
+
+    updateHome();
+    setInterval(updateHome,1000);
   }
 
-  function hidePanels(){panels.forEach(id=>{const el=$id(id);if(el)el.classList.add('app-panel-hidden')});}
-  function openPanel(id){
-    if(id==='activeCard'&&!(typeof active!=='undefined'&&active))return typeof toast==='function'&&toast('Chưa có ca đang hoạt động');
-    hidePanels();
-    dashboard?.classList.add('dashboard-hidden');backBar?.classList.remove('dashboard-hidden');
-    const el=$id(id);if(el){el.classList.remove('app-panel-hidden');el.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}
+  function hidePanels(){
+    panels.forEach(id=>{const el=$id(id);if(el)el.classList.add('app-panel-hidden')});
   }
-  function showHome(){hidePanels();dashboard?.classList.remove('dashboard-hidden');backBar?.classList.add('dashboard-hidden');window.scrollTo({top:0,behavior:'smooth'});updateHome()}
-  function openReport(){
-    openPanel('managerSection');
-    setTimeout(()=>{
-      const exportSection=$id('managerExportSection');
-      if(exportSection&&!exportSection.closest('.hidden'))exportSection.scrollIntoView({behavior:'smooth',block:'start'});
-    },250);
+
+  async function refreshFor(id){
+    try{
+      if(id==='attendanceSection'&&typeof refreshAttendance==='function')await refreshAttendance();
+      if(id==='startCard'&&typeof refreshActive==='function')await refreshActive();
+      if(id==='quickRevenueCard'){
+        if(typeof refreshActive==='function')await refreshActive();
+        if(typeof refreshOutsideRevenue==='function')await refreshOutsideRevenue();
+      }
+      if(id==='summarySection'&&typeof refreshSummary==='function')await refreshSummary();
+      if(id==='debtSection'&&typeof refreshDebts==='function')await refreshDebts();
+      if(id==='activeCard'&&typeof refreshActive==='function')await refreshActive();
+      if(id==='historySection'&&typeof refreshHistory==='function')await refreshHistory();
+      if(id==='managerSection'&&typeof refreshManager==='function'&&typeof managerPin!=='undefined'&&managerPin)await refreshManager();
+    }catch(e){console.error(e)}
+  }
+
+  async function openPanel(id){
+    if(id==='activeCard'){
+      if(typeof refreshActive==='function')await refreshActive();
+      if(!(typeof active!=='undefined'&&active))return typeof toast==='function'&&toast('Chưa có ca đang hoạt động');
+    }
+    hidePanels();
+    dashboard?.classList.add('dashboard-hidden');
+    backBar?.classList.remove('dashboard-hidden');
+    const el=$id(id);
+    if(el){
+      el.classList.remove('app-panel-hidden');
+      if(id!=='activeCard'||(typeof active!=='undefined'&&active))el.classList.remove('hidden');
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+    await refreshFor(id);
+  }
+
+  function showHome(){
+    hidePanels();
+    dashboard?.classList.remove('dashboard-hidden');
+    backBar?.classList.add('dashboard-hidden');
+    window.scrollTo({top:0,behavior:'smooth'});
+    updateHome();
+  }
+
+  async function ensureManagerOpen(){
+    const panel=$id('managerPanel');
+    if(!panel)return false;
+    if(!panel.classList.contains('hidden'))return true;
+    const btn=$id('managerOpenBtn');
+    if(!btn)return false;
+    btn.click();
+    for(let i=0;i<20;i++){
+      await new Promise(r=>setTimeout(r,100));
+      if(!panel.classList.contains('hidden'))return true;
+    }
+    return false;
+  }
+
+  async function openManager(){
+    await openPanel('managerSection');
+    await ensureManagerOpen();
+  }
+
+  async function openReport(){
+    await openPanel('managerSection');
+    const opened=await ensureManagerOpen();
+    if(!opened)return;
+    const exportSection=$id('managerExportSection');
+    if(exportSection){
+      exportSection.scrollIntoView({behavior:'smooth',block:'start'});
+    }else if(typeof toast==='function'){
+      toast('Đang tải mục Báo cáo, hãy thử lại sau một giây');
+    }
   }
 
   function updateHome(){
     const d=new Date();
     const date=new Intl.DateTimeFormat('vi-VN',{timeZone:'Asia/Ho_Chi_Minh',day:'2-digit',month:'2-digit',year:'numeric'}).format(d);
     const dt=$id('homeDateText');if(dt)dt.textContent=date;
-    const preview=$id('attendancePreview');const late=$id('homeLateText');
+
+    const preview=$id('attendancePreview');
+    const late=$id('homeLateText');
     if(late&&preview){
       const t=preview.textContent||'';
       const m=t.match(/Trễ\s+(\d+)\s+phút/i);
       late.textContent=m?`${m[1]} phút`:(/Đúng giờ/i.test(t)?'Đúng giờ':'—');
     }
-    const activeTile=$id('homeActiveTile');if(activeTile)activeTile.disabled=!(typeof active!=='undefined'&&active);
+
+    const activeTile=$id('homeActiveTile');
+    if(activeTile)activeTile.disabled=!(typeof active!=='undefined'&&active);
   }
 
   function boot(){build()}
