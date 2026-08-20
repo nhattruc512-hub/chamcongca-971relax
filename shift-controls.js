@@ -1,4 +1,4 @@
-// Keep shift choices visible but locked while another shift is active, and allow other devices to close via manager PIN.
+// Keep shift choices visible and allow a second staff member to join the same active shift.
 (function(){
   const ENDPOINT='https://dinqlgaveujdeyisgpty.supabase.co/functions/v1/manager-close-active-shift';
   const el=id=>document.getElementById(id);
@@ -25,17 +25,23 @@
     }
   }
 
+  function participantCount(){
+    if(typeof active==='undefined'||!active)return 0;
+    const p=Array.isArray(active.participants)?active.participants:[];
+    return p.length||1;
+  }
+
   function apply(){
     ensureUI();
     const start=el('startCard'),notice=el('shiftBusyNotice'),pinBtn=el('managerPinCloseBtn'),finish=el('finishShiftBtn');
     if(start)start.classList.remove('hidden');
     const running=typeof active!=='undefined'&&!!active;
-    document.querySelectorAll('.shift').forEach(b=>b.disabled=running);
-    const startBtn=el('startShiftBtn');if(startBtn&&running)startBtn.disabled=true;
-    if(notice){
-      notice.classList.add('hidden');
-      notice.textContent='';
-    }
+    const count=participantCount();
+    document.querySelectorAll('.shift').forEach(b=>{
+      b.disabled=running&&(count>=2||b.dataset.shift!==active.shiftKey);
+    });
+    if(notice){notice.classList.add('hidden');notice.textContent=''}
+    if(typeof updateStartButton==='function')updateStartButton();
     const own=running&&typeof isOwner==='function'&&isOwner();
     if(finish)finish.classList.toggle('hidden',!own);
     if(pinBtn)pinBtn.classList.toggle('hidden',!running||own);
@@ -64,9 +70,7 @@
   }
 
   const oldRender=typeof renderActive==='function'?renderActive:null;
-  if(oldRender){
-    renderActive=function(){oldRender();apply()};
-  }
+  if(oldRender){renderActive=function(){oldRender();apply()}}
   function boot(){ensureUI();apply();setInterval(apply,1200)}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
