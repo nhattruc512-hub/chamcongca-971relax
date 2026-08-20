@@ -110,12 +110,3 @@
   function boot(){ensureUI();apply();setInterval(apply,1200)}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
-
-(function(){
-  if(!document.querySelector('link[data-section-tabs]')){
-    const l=document.createElement('link');l.rel='stylesheet';l.href='./tabs.css?v=14';l.dataset.sectionTabs='1';document.head.appendChild(l);
-  }
-  if(!document.querySelector('script[data-section-tabs]')){
-    const s=document.createElement('script');s.src='./section-tabs.js?v=14';s.dataset.sectionTabs='1';document.body.appendChild(s);
-  }
-})();
