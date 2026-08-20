@@ -9,7 +9,7 @@
   <title>971 Relax Court · Nhân viên</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="styles.css?v=8" />
+  <link rel="stylesheet" href="styles.css?v=9" />
 </head>
 <body>
 <header class="hero">
@@ -52,6 +52,17 @@
   </section>
 
   <div id="shiftSection" class="section-anchor"></div>
+  <section id="startCard" class="card primary-card">
+    <div class="head"><div><div class="kicker">CA LÀM VIỆC</div><h2>Bắt đầu ca</h2><p class="muted">Chọn tên nhân viên và ca làm việc.</p></div></div>
+    <label><span>Tên nhân viên</span><input id="employeeName" class="input" maxlength="60" placeholder="Nhập tên nhân viên"></label>
+    <div class="shift-grid">
+      <button data-shift="ca1" class="shift"><strong>Ca 1</strong><small>05:00 – 11:00</small></button>
+      <button data-shift="ca2" class="shift"><strong>Ca 2</strong><small>14:00 – 18:00</small></button>
+      <button data-shift="ca3" class="shift"><strong>Ca 3</strong><small>18:00 – 22:00</small></button>
+    </div>
+    <button id="startShiftBtn" class="btn primary block" disabled>BẮT ĐẦU CA</button>
+  </section>
+
   <section id="activeCard" class="card active hidden">
     <div class="head"><div><div class="kicker">CA ĐANG HOẠT ĐỘNG</div><h2 id="activeTitle">Ca</h2><p id="activeMeta" class="muted"></p></div><span class="badge live">Đang làm</span></div>
     <div id="activeLockNotice" class="notice"></div>
@@ -63,17 +74,6 @@
     <div class="totals"><div><span>Tổng tiền thu</span><b id="liveCollected">0 ₫</b></div><div><span>Tổng doanh thu</span><b id="liveRevenue">0 ₫</b></div><div><span>Chênh lệch</span><b id="liveDiff">0 ₫</b></div></div>
     <div class="section-gap"><div class="kicker">DIỄN BIẾN CA</div><div id="activeEntries" class="list"></div><div id="activeEntriesEmpty" class="empty">Chưa có khoản doanh thu nào trong ca.</div></div>
     <button id="finishShiftBtn" class="btn danger block hidden">KẾT THÚC CA</button>
-  </section>
-
-  <section id="startCard" class="card primary-card">
-    <div class="head"><div><div class="kicker">CA LÀM VIỆC</div><h2>Bắt đầu ca</h2><p class="muted">Chọn tên nhân viên và ca làm việc.</p></div></div>
-    <label><span>Tên nhân viên</span><input id="employeeName" class="input" maxlength="60" placeholder="Nhập tên nhân viên"></label>
-    <div class="shift-grid">
-      <button data-shift="ca1" class="shift"><strong>Ca 1</strong><small>05:00 – 11:00</small></button>
-      <button data-shift="ca2" class="shift"><strong>Ca 2</strong><small>14:00 – 18:00</small></button>
-      <button data-shift="ca3" class="shift"><strong>Ca 3</strong><small>18:00 – 22:00</small></button>
-    </div>
-    <button id="startShiftBtn" class="btn primary block" disabled>BẮT ĐẦU CA</button>
   </section>
 
   <section id="quickRevenueCard" class="card primary-card">
@@ -117,10 +117,10 @@
   </section>
 </main>
 <div id="toast" class="toast"></div>
-<script src="app.js?v=8"></script>
-<script src="revenue-delete.js?v=8"></script>
-<script src="manager-close.js?v=8"></script>
-<script src="shift-controls.js?v=8"></script>
-<script src="manager-export.js?v=8"></script>
+<script src="app.js?v=9"></script>
+<script src="revenue-delete.js?v=9"></script>
+<script src="manager-close.js?v=9"></script>
+<script src="shift-controls.js?v=9"></script>
+<script src="manager-export.js?v=9"></script>
 </body>
 </html>
