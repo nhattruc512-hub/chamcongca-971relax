@@ -82,7 +82,7 @@
     const blob=new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
-  function viStatus(r){return r.status==='late'?`Trễ ${Number(r.late_minutes||0)} phút`:'Đúng giờ'}
+  function viStatus(r){return (r.punch_type||'in')==='out'?'Chấm công ra':(r.status==='late'?`Trễ ${Number(r.late_minutes||0)} phút`:'Đúng giờ')}
   function inRange(dateKey,p){return String(dateKey)>=p.start&&String(dateKey)<=p.end}
 
   async function exportAttendance(){
@@ -95,6 +95,7 @@
       const out=rows.map(r=>[
         r.date_key,
         vnTime(r.punched_at),
+        (r.punch_type||'in')==='out'?'Chấm công ra':'Chấm công vào',
         r.employee||'',
         r.shift_name||'',
         `${r.scheduled_start||''} - ${r.scheduled_end||''}`,
@@ -104,7 +105,7 @@
         r.longitude??'',
         r.accuracy_m??''
       ]);
-      downloadCsv(`971-cham-cong-${p.label}.csv`,['Ngày','Giờ chấm','Nhân viên','Ca','Giờ ca','Trạng thái','Phút trễ','Vĩ độ','Kinh độ','Độ chính xác GPS (m)'],out);
+      downloadCsv(`971-cham-cong-${p.label}.csv`,['Ngày','Giờ','Loại chấm công','Nhân viên','Ca','Giờ ca','Trạng thái','Phút trễ','Vĩ độ','Kinh độ','Độ chính xác GPS (m)'],out);
       toast(`Đã xuất ${rows.length} dòng chấm công`);
     }catch(e){console.error(e);toast('Không xuất được lịch sử chấm công')}
     finally{btn.disabled=false}
