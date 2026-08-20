@@ -2,6 +2,20 @@
   const el=id=>document.getElementById(id);
   const sameName=(a,b)=>String(a||'').trim().toLowerCase()===String(b||'').trim().toLowerCase();
 
+  function checkInShift(){
+    const p=vnClockParts(),mins=p.h*60+p.m;
+    let key='';
+    if(mins>=SHIFTS.ca1.start&&mins<=SHIFTS.ca1.end)key='ca1';
+    else if(mins>SHIFTS.ca1.end&&mins<SHIFTS.ca3.start)key='ca2';
+    else if(mins>=SHIFTS.ca3.start&&mins<=SHIFTS.ca3.end)key='ca3';
+    if(!key)return null;
+    const s=SHIFTS[key];
+    const late=mins>s.start+1;
+    return{key,...s,late,lateMinutes:late?mins-s.start:0,early:mins<s.start};
+  }
+
+  attendanceShift=function(){return checkInShift()};
+
   function getPosition(){
     return new Promise((resolve,reject)=>{
       if(!navigator.geolocation)return reject(new Error('Thiết bị không hỗ trợ vị trí'));
@@ -25,7 +39,7 @@
     try{
       const rows=await dayRows(date);
       if(type==='in'){
-        shift=attendanceShift();
+        shift=checkInShift();
         if(!shift)return toast('Ngoài giờ chấm công vào');
         if(rows.some(r=>sameName(r.employee,employee)&&r.shift_key===shift.key&&(r.punch_type||'in')==='in'))return toast(`Đã chấm công vào ${shift.name} hôm nay`);
         late=!!shift.late;
