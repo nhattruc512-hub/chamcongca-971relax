@@ -6,8 +6,8 @@
     const p=vnClockParts(),mins=p.h*60+p.m;
     let key='';
     if(mins>=SHIFTS.ca1.start&&mins<=SHIFTS.ca1.end)key='ca1';
-    else if(mins>SHIFTS.ca1.end&&mins<SHIFTS.ca3.start)key='ca2';
-    else if(mins>=SHIFTS.ca3.start&&mins<=SHIFTS.ca3.end)key='ca3';
+    else if(mins>SHIFTS.ca1.end&&mins<17*60)key='ca2';
+    else if(mins>=17*60&&mins<=SHIFTS.ca3.end)key='ca3';
     if(!key)return null;
     const s=SHIFTS[key];
     const late=mins>s.start+1;
