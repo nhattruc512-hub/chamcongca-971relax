@@ -18,10 +18,11 @@
   <section class="card"><div class="head"><div><div class="kicker">DOANH THU</div><h2>Tổng hợp theo ngày</h2></div></div><div class="grid"><div class="stat"><span>Chuyển khoản</span><b id="sTransfer">0 ₫</b></div><div class="stat"><span>Tiền mặt</span><b id="sCash">0 ₫</b></div><div class="stat"><span>Doanh thu sân</span><b id="sCourt">0 ₫</b></div><div class="stat"><span>Doanh thu nước</span><b id="sWater">0 ₫</b></div></div><div class="grid"><div class="stat"><span>Tổng tiền thu</span><b id="sCollected">0 ₫</b></div><div class="stat"><span>Tổng doanh thu</span><b id="sRevenue">0 ₫</b></div><div class="stat"><span>Chênh lệch</span><b id="sDiff">0 ₫</b></div></div></section>
   <div class="split"><section class="card"><div class="kicker">CHẤM CÔNG</div><h2>Lịch sử vào / ra</h2><div id="attendanceList"></div><div id="attendanceEmpty" class="empty">Chưa có dữ liệu.</div></section><section class="card"><div class="kicker">KHÁCH NỢ</div><h2>Công nợ đang mở</h2><div id="debtTotal" class="muted"></div><div id="debtList"></div><div id="debtEmpty" class="empty">Không có khách nợ.</div></section></div>
   <section class="card"><div class="kicker">LỊCH SỬ CA</div><h2>Các ca đã kết thúc</h2><div id="historyList"></div><div id="historyEmpty" class="empty">Chưa có ca.</div></section>
-  <section class="card"><div class="kicker">NHẬT KÝ HOẠT ĐỘNG</div><h2>Hoạt động hệ thống</h2><div id="auditList"></div><div id="auditEmpty" class="empty">Chưa có hoạt động.</div></section>
+  <section class="card"><div class="head"><div><div class="kicker">NHẬT KÝ HOẠT ĐỘNG</div><h2>Hoạt động hệ thống</h2></div><button id="auditCollapseBtn" class="btn" type="button" aria-expanded="true">THU GỌN</button></div><div id="auditCollapseBody"><div id="auditList"></div><div id="auditEmpty" class="empty">Chưa có hoạt động.</div></div></section>
   <section class="card"><div class="kicker">XUẤT BÁO CÁO</div><h2>Chấm công, doanh thu & công nợ</h2><div class="filters"><select id="exportType" class="input"><option value="day">Theo ngày</option><option value="month">Theo tháng</option><option value="year">Theo năm</option></select><input id="exportValue" type="date" class="input"></div><div class="filters"><button id="exportAttendanceBtn" class="btn primary">XUẤT CHẤM CÔNG</button><button id="exportRevenueBtn" class="btn primary">XUẤT DOANH THU</button></div></section>
 </main>
 <div id="toast" class="toast"></div>
-<script src="manager-app.js?v=3"></script>
-<script src="manager-shift-summary.js?v=3"></script>
+<script src="manager-app.js?v=4"></script>
+<script src="manager-shift-summary.js?v=4"></script>
+<script src="manager-collapse.js?v=4"></script>
 </body></html>
