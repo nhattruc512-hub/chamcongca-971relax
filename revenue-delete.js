@@ -6,14 +6,21 @@
   const revenueCells=e=>[
     ['Chuyển khoản',e.transfer],
     ['Tiền mặt',e.cash],
-    ['Doanh thu sân',e.courtRevenue],
-    ['Doanh thu nước',e.waterRevenue]
+    ['Doanh thu sân (lịch đặt, vé social, thuê...)',e.courtRevenue],
+    ['Doanh thu nước (phụ kiện, bánh, kem,...)',e.waterRevenue]
   ].filter(([,v])=>Number(v));
   const renderEntryValues=e=>{
     const cells=revenueCells(e);
     if(!cells.length)return '<div class="shift-entry-empty">Không có số liệu</div>';
     return `<div class="shift-entry-grid">${cells.map(([label,value])=>`<div class="shift-entry-cell"><span>${label}</span><b>${money(value)}</b></div>`).join('')}</div>`;
   };
+
+  function applyRevenueLabels(){
+    const court=$('qCourt')?.closest('label')?.querySelector('span');
+    const water=$('qWater')?.closest('label')?.querySelector('span');
+    if(court)court.textContent='Doanh thu sân (lịch đặt, vé social, thuê...)';
+    if(water)water.textContent='Doanh thu nước (phụ kiện, bánh, kem,...)';
+  }
 
   renderActive=function(){
     oldRenderActive();
@@ -87,6 +94,6 @@
   const oldRefreshSummary=refreshSummary;
   refreshSummary=async function(){await oldRefreshSummary();if($('outsideRevenueList'))refreshOutsideRevenue()};
 
-  function bootDelete(){mountOutsideHistory();refreshOutsideRevenue();if(active)renderActive()}
+  function bootDelete(){applyRevenueLabels();mountOutsideHistory();refreshOutsideRevenue();if(active)renderActive()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootDelete);else bootDelete();
 })();
