@@ -3,17 +3,25 @@
   let outsideRows=[];
   const DELETE_ACTIVE_ENDPOINT='https://dinqlgaveujdeyisgpty.supabase.co/functions/v1/delete-active-revenue-entry';
   const oldRenderActive=renderActive;
+  const revenueCells=e=>[
+    ['Chuyển khoản',e.transfer],
+    ['Tiền mặt',e.cash],
+    ['Doanh thu sân',e.courtRevenue],
+    ['Doanh thu nước',e.waterRevenue]
+  ].filter(([,v])=>Number(v));
+  const renderEntryValues=e=>{
+    const cells=revenueCells(e);
+    if(!cells.length)return '<div class="shift-entry-empty">Không có số liệu</div>';
+    return `<div class="shift-entry-grid">${cells.map(([label,value])=>`<div class="shift-entry-cell"><span>${label}</span><b>${money(value)}</b></div>`).join('')}</div>`;
+  };
+
   renderActive=function(){
     oldRenderActive();
     if(!active||!$('activeEntries'))return;
     const entries=active.entries||[];
+    $('activeEntriesEmpty').classList.toggle('hidden',entries.length>0);
     $('activeEntries').innerHTML=entries.map(e=>{
-      const p=[];
-      if(e.transfer)p.push(`CK ${money(e.transfer)}`);
-      if(e.cash)p.push(`TM ${money(e.cash)}`);
-      if(e.courtRevenue)p.push(`Sân ${money(e.courtRevenue)}`);
-      if(e.waterRevenue)p.push(`Nước ${money(e.waterRevenue)}`);
-      return `<div class="row"><div class="row-main"><b>${esc(vnTime(e.at))} · ${esc(e.employee||active.employee)}</b><span>${p.join(' · ')}</span></div><div class="row-actions"><button class="btn danger mini" type="button" data-active-revenue-delete="${esc(e.id)}">Xóa</button></div></div>`;
+      return `<div class="shift-entry"><div class="shift-entry-head"><div><b>${esc(e.employee||active.employee)}</b><span>${esc(vnTime(e.at))}</span></div><button class="btn danger mini" type="button" data-active-revenue-delete="${esc(e.id)}">Xóa</button></div>${renderEntryValues(e)}</div>`;
     }).join('');
     document.querySelectorAll('[data-active-revenue-delete]').forEach(b=>b.onclick=()=>deleteActiveRevenue(b.dataset.activeRevenueDelete));
   };
