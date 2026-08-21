@@ -103,11 +103,20 @@
     }).join('');
   };
 
+  function loadCollapse(){
+    if(document.querySelector('script[data-attendance-collapse]'))return;
+    const s=document.createElement('script');
+    s.src='attendance-collapse.js?v=21';
+    s.dataset.attendanceCollapse='1';
+    document.body.appendChild(s);
+  }
+
   function boot(){
     const inBtn=el('attendanceInBtn'),outBtn=el('attendanceOutBtn');
     if(inBtn)inBtn.onclick=()=>punch('in');
     if(outBtn)outBtn.onclick=()=>punch('out');
     if(typeof refreshAttendance==='function')refreshAttendance();
+    loadCollapse();
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
