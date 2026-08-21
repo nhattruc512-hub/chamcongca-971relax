@@ -40,4 +40,14 @@
       }catch(e){toast(e.message||'Không kết thúc được ca')}
     };
   }
+
+  function loadFeature(src,key){
+    if(document.querySelector(`script[data-feature="${key}"]`))return;
+    const s=document.createElement('script');
+    s.src=src;
+    s.dataset.feature=key;
+    document.body.appendChild(s);
+  }
+  loadFeature('./attendance-collapse.js?v=23','attendance-collapse');
+  loadFeature('./debt-edit.js?v=23','debt-edit');
 })();
