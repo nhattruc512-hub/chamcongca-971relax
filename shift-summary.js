@@ -48,6 +48,7 @@
     s.dataset.feature=key;
     document.body.appendChild(s);
   }
-  loadFeature('./attendance-collapse.js?v=24','attendance-collapse');
-  loadFeature('./debt-edit.js?v=24','debt-edit');
+  loadFeature('./attendance-collapse.js?v=25','attendance-collapse');
+  loadFeature('./debt-edit.js?v=25','debt-edit');
+  loadFeature('./shift-entries-collapse.js?v=25','shift-entries-collapse');
 })();
