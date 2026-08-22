@@ -48,6 +48,6 @@
     s.dataset.feature=key;
     document.body.appendChild(s);
   }
-  loadFeature('./attendance-collapse.js?v=23','attendance-collapse');
-  loadFeature('./debt-edit.js?v=23','debt-edit');
+  loadFeature('./attendance-collapse.js?v=24','attendance-collapse');
+  loadFeature('./debt-edit.js?v=24','debt-edit');
 })();
