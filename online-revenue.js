@@ -7,7 +7,7 @@
       label.innerHTML='<span>Lịch Online</span><input id="qOnline" class="input money" inputmode="numeric" placeholder="0">';
       grid.appendChild(label);
       const input=label.querySelector('input');
-      if(input)input.addEventListener('blur',()=>fmtInput(input));
+      if(input){input.addEventListener('input',()=>fmtInput(input));input.addEventListener('blur',()=>fmtInput(input))}
     }
     const liveGrid=$('activeCard')?.querySelector('.summary-grid');
     if(liveGrid&&!$('liveOnline')){
@@ -82,6 +82,12 @@
     }catch(e){console.error(e)}
   };
 
-  function boot(){mountFields();if(active)renderActive();refreshSummary()}
+  function boot(){
+    mountFields();
+    if($('addRevenueBtn'))$('addRevenueBtn').onclick=addRevenue;
+    if($('summaryDate'))$('summaryDate').onchange=refreshSummary;
+    if(active)renderActive();
+    refreshSummary();
+  }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
 })();
