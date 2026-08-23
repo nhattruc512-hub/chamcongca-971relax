@@ -1,21 +1,21 @@
-// Separate Lịch Online revenue category for staff revenue entry, live shift totals and daily summary.
+// Separate Lịch Oline revenue category for staff revenue entry, live shift totals and daily summary.
 (function(){
   function mountFields(){
     const grid=document.querySelector('#quickRevenueCard .money-grid');
     if(grid&&!$('qOnline')){
       const label=document.createElement('label');
-      label.innerHTML='<span>Lịch Online</span><input id="qOnline" class="input money" inputmode="numeric" placeholder="0">';
+      label.innerHTML='<span>Lịch Oline</span><input id="qOnline" class="input money" inputmode="numeric" placeholder="0">';
       grid.appendChild(label);
       const input=label.querySelector('input');
       if(input){input.addEventListener('input',()=>fmtInput(input));input.addEventListener('blur',()=>fmtInput(input))}
     }
     const liveGrid=$('activeCard')?.querySelector('.summary-grid');
     if(liveGrid&&!$('liveOnline')){
-      const box=document.createElement('div');box.innerHTML='<span>Lịch Online</span><b id="liveOnline">0 ₫</b>';liveGrid.appendChild(box);
+      const box=document.createElement('div');box.innerHTML='<span>Lịch Oline</span><b id="liveOnline">0 ₫</b>';liveGrid.appendChild(box);
     }
     const sumGrid=$('summarySection')?.querySelector('.summary-grid');
     if(sumGrid&&!$('sumOnline')){
-      const box=document.createElement('div');box.innerHTML='<span>Lịch Online</span><b id="sumOnline">0 ₫</b>';sumGrid.appendChild(box);
+      const box=document.createElement('div');box.innerHTML='<span>Lịch Oline</span><b id="sumOnline">0 ₫</b>';sumGrid.appendChild(box);
     }
   }
 
@@ -27,7 +27,7 @@
       if(!online||!card||card.querySelector('[data-online-cell]'))return;
       let grid=card.querySelector('.shift-entry-grid');
       if(!grid){grid=document.createElement('div');grid.className='shift-entry-grid';card.appendChild(grid)}
-      const cell=document.createElement('div');cell.className='shift-entry-cell';cell.dataset.onlineCell='1';cell.innerHTML=`<span>Lịch Online</span><b>${money(online)}</b>`;grid.appendChild(cell);
+      const cell=document.createElement('div');cell.className='shift-entry-cell';cell.dataset.onlineCell='1';cell.innerHTML=`<span>Lịch Oline</span><b>${money(online)}</b>`;grid.appendChild(cell);
     });
   }
 
