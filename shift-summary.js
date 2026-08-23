@@ -16,7 +16,7 @@
       $('historyEmpty').classList.toggle('hidden',list.length>0);
       $('historyList').innerHTML=list.map(r=>{
         const s=fullShiftSummary(r);
-        return `<div class="row"><div class="row-main"><b>${esc(r.shift_name)} · ${esc(r.employee)}</b><span>${vnTime(r.start_at)} → ${vnTime(r.end_at)}</span><small>CK ${money(s.transfer)} · TM ${money(s.cash)}</small><small>Sân ${money(s.court)} · Nước ${money(s.water)} · Lịch Online ${money(s.online)}</small><small><b>Tổng thu ${money(s.collected)} · Tổng doanh thu ${money(s.revenue)} · Chênh lệch ${money(s.diff)}</b></small></div></div>`;
+        return `<div class="row"><div class="row-main"><b>${esc(r.shift_name)} · ${esc(r.employee)}</b><span>${vnTime(r.start_at)} → ${vnTime(r.end_at)}</span><small>CK ${money(s.transfer)} · TM ${money(s.cash)}</small><small>Sân ${money(s.court)} · Nước ${money(s.water)} · Lịch Oline ${money(s.online)}</small><small><b>Tổng thu ${money(s.collected)} · Tổng doanh thu ${money(s.revenue)} · Chênh lệch ${money(s.diff)}</b></small></div></div>`;
       }).join('');
     };
   }
@@ -36,7 +36,7 @@
         active=null;
         renderActive();
         await refreshAll();
-        alert(`ĐÃ CHỐT ${r.shift_name||current.shiftName}\n\nChuyển khoản: ${money(s.transfer)}\nTiền mặt: ${money(s.cash)}\nDoanh thu sân: ${money(s.court)}\nDoanh thu nước: ${money(s.water)}\nLịch Online: ${money(s.online)}\n\nTổng tiền thu: ${money(s.collected)}\nTổng doanh thu: ${money(s.revenue)}\nChênh lệch: ${money(s.diff)}`);
+        alert(`ĐÃ CHỐT ${r.shift_name||current.shiftName}\n\nChuyển khoản: ${money(s.transfer)}\nTiền mặt: ${money(s.cash)}\nDoanh thu sân: ${money(s.court)}\nDoanh thu nước: ${money(s.water)}\nLịch Oline: ${money(s.online)}\n\nTổng tiền thu: ${money(s.collected)}\nTổng doanh thu: ${money(s.revenue)}\nChênh lệch: ${money(s.diff)}`);
       }catch(e){toast(e.message||'Không kết thúc được ca')}
     };
   }
