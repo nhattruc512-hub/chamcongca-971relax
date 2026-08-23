@@ -1,11 +1,11 @@
 // Show a complete per-shift revenue closeout after a shift ends and in shift history.
 (function(){
   function fullShiftSummary(r){
-    const transfer=Number(r?.transfer||0),cash=Number(r?.cash||0),court=Number(r?.court_revenue||0),water=Number(r?.water_revenue||0);
+    const transfer=Number(r?.transfer||0),cash=Number(r?.cash||0),court=Number(r?.court_revenue||0),water=Number(r?.water_revenue||0),online=Number(r?.online_revenue||0);
     const collected=Number.isFinite(Number(r?.collected_total))?Number(r.collected_total):transfer+cash;
-    const revenue=Number.isFinite(Number(r?.revenue_total))?Number(r.revenue_total):court+water;
+    const revenue=Number.isFinite(Number(r?.revenue_total))?Number(r.revenue_total):court+water+online;
     const diff=Number.isFinite(Number(r?.difference))?Number(r.difference):collected-revenue;
-    return {transfer,cash,court,water,collected,revenue,diff};
+    return {transfer,cash,court,water,online,collected,revenue,diff};
   }
 
   const oldRenderHistory=typeof renderHistory==='function'?renderHistory:null;
@@ -16,7 +16,7 @@
       $('historyEmpty').classList.toggle('hidden',list.length>0);
       $('historyList').innerHTML=list.map(r=>{
         const s=fullShiftSummary(r);
-        return `<div class="row"><div class="row-main"><b>${esc(r.shift_name)} · ${esc(r.employee)}</b><span>${vnTime(r.start_at)} → ${vnTime(r.end_at)}</span><small>CK ${money(s.transfer)} · TM ${money(s.cash)}</small><small>Sân ${money(s.court)} · Nước ${money(s.water)}</small><small><b>Tổng thu ${money(s.collected)} · Tổng doanh thu ${money(s.revenue)} · Chênh lệch ${money(s.diff)}</b></small></div></div>`;
+        return `<div class="row"><div class="row-main"><b>${esc(r.shift_name)} · ${esc(r.employee)}</b><span>${vnTime(r.start_at)} → ${vnTime(r.end_at)}</span><small>CK ${money(s.transfer)} · TM ${money(s.cash)}</small><small>Sân ${money(s.court)} · Nước ${money(s.water)} · Lịch Online ${money(s.online)}</small><small><b>Tổng thu ${money(s.collected)} · Tổng doanh thu ${money(s.revenue)} · Chênh lệch ${money(s.diff)}</b></small></div></div>`;
       }).join('');
     };
   }
@@ -36,7 +36,7 @@
         active=null;
         renderActive();
         await refreshAll();
-        alert(`ĐÃ CHỐT ${r.shift_name||current.shiftName}\n\nChuyển khoản: ${money(s.transfer)}\nTiền mặt: ${money(s.cash)}\nDoanh thu sân: ${money(s.court)}\nDoanh thu nước: ${money(s.water)}\n\nTổng tiền thu: ${money(s.collected)}\nTổng doanh thu: ${money(s.revenue)}\nChênh lệch: ${money(s.diff)}`);
+        alert(`ĐÃ CHỐT ${r.shift_name||current.shiftName}\n\nChuyển khoản: ${money(s.transfer)}\nTiền mặt: ${money(s.cash)}\nDoanh thu sân: ${money(s.court)}\nDoanh thu nước: ${money(s.water)}\nLịch Online: ${money(s.online)}\n\nTổng tiền thu: ${money(s.collected)}\nTổng doanh thu: ${money(s.revenue)}\nChênh lệch: ${money(s.diff)}`);
       }catch(e){toast(e.message||'Không kết thúc được ca')}
     };
   }
@@ -48,7 +48,8 @@
     s.dataset.feature=key;
     document.body.appendChild(s);
   }
-  loadFeature('./attendance-collapse.js?v=25','attendance-collapse');
-  loadFeature('./debt-edit.js?v=25','debt-edit');
-  loadFeature('./shift-entries-collapse.js?v=25','shift-entries-collapse');
+  loadFeature('./attendance-collapse.js?v=26','attendance-collapse');
+  loadFeature('./debt-edit.js?v=26','debt-edit');
+  loadFeature('./shift-entries-collapse.js?v=26','shift-entries-collapse');
+  loadFeature('./online-revenue.js?v=26','online-revenue');
 })();
