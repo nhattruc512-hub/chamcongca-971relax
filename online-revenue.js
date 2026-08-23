@@ -19,6 +19,18 @@
     }
   }
 
+  function addOnlineEntryCells(){
+    if(!active)return;
+    const cards=[...document.querySelectorAll('#activeEntries .shift-entry')];
+    (active.entries||[]).forEach((e,i)=>{
+      const online=Number(e.onlineRevenue||0),card=cards[i];
+      if(!online||!card||card.querySelector('[data-online-cell]'))return;
+      let grid=card.querySelector('.shift-entry-grid');
+      if(!grid){grid=document.createElement('div');grid.className='shift-entry-grid';card.appendChild(grid)}
+      const cell=document.createElement('div');cell.className='shift-entry-cell';cell.dataset.onlineCell='1';cell.innerHTML=`<span>Lịch Online</span><b>${money(online)}</b>`;grid.appendChild(cell);
+    });
+  }
+
   const previousRenderActive=typeof renderActive==='function'?renderActive:null;
   if(previousRenderActive){
     renderActive=function(){
@@ -30,6 +42,7 @@
       if($('liveOnline'))$('liveOnline').textContent=money(online);
       if($('liveRevenue'))$('liveRevenue').textContent=money(court+water+online);
       if($('liveDiff'))$('liveDiff').textContent=money(transfer+cash-court-water-online);
+      addOnlineEntryCells();
     };
   }
 
@@ -45,6 +58,7 @@
         const now=new Date();
         await rest('staff_revenue_entries',{method:'POST',headers:{Prefer:'return=minimal'},body:JSON.stringify({date_key:localDateKey(now),employee,transfer,cash,court_revenue:courtRevenue,water_revenue:waterRevenue,online_revenue:onlineRevenue,shift_name:'Ngoài ca',source:'manual'})});
         toast('Đã lưu doanh thu ngoài ca');
+        setTimeout(()=>$('outsideRevenueRefresh')?.click(),120);
       }
       ['qTransfer','qCash','qCourt','qWater','qOnline'].forEach(id=>{if($(id))$(id).value=''});
       await refreshSummary();
