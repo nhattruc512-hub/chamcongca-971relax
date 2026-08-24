@@ -3,18 +3,14 @@
   let outsideRows=[];
   const DELETE_ACTIVE_ENDPOINT='https://dinqlgaveujdeyisgpty.supabase.co/functions/v1/delete-active-revenue-entry';
   const oldRenderActive=renderActive;
-  const revenueCells=e=>[
-    ['Chuyển khoản',e.transfer],
-    ['Tiền mặt',e.cash],
-    ['Doanh thu sân',e.courtRevenue],
-    ['Doanh thu nước',e.waterRevenue],
-    ['Lịch Oline',e.onlineRevenue]
-  ].filter(([,v])=>Number(v));
-  const renderEntryValues=e=>{
-    const cells=revenueCells(e);
-    if(!cells.length)return '<div class="shift-entry-empty">Không có số liệu</div>';
-    return `<div class="shift-entry-grid">${cells.map(([label,value])=>`<div class="shift-entry-cell"><span>${label}</span><b>${money(value)}</b></div>`).join('')}</div>`;
-  };
+  const CATEGORY_DEFS=[
+    {key:'transfer',label:'Chuyển khoản'},
+    {key:'cash',label:'Tiền mặt'},
+    {key:'courtRevenue',label:'Doanh thu sân'},
+    {key:'waterRevenue',label:'Doanh thu nước'},
+    {key:'onlineRevenue',label:'Lịch Oline'}
+  ];
+  const revenueCells=e=>CATEGORY_DEFS.map(c=>[c.label,e?.[c.key]]).filter(([,v])=>Number(v));
 
   function applyRevenueLabels(){
     const court=$('qCourt')?.closest('label')?.querySelector('span');
@@ -23,12 +19,22 @@
     if(water)water.textContent='Doanh thu nước (phụ kiện, bánh, kem,...)';
   }
 
+  function renderRevenueGroups(entries){
+    const groups=CATEGORY_DEFS.map(cat=>{
+      const rows=entries.filter(e=>Number(e?.[cat.key]||0));
+      if(!rows.length)return '';
+      const total=rows.reduce((sum,e)=>sum+Number(e?.[cat.key]||0),0);
+      return `<section class="revenue-group"><div class="revenue-group-head"><b>${cat.label}</b><strong>${money(total)}</strong></div><div class="revenue-group-list">${rows.map(e=>`<div class="revenue-group-row"><div class="revenue-group-info"><b>${money(e[cat.key])}</b><span>${esc(vnTime(e.at))} · ${esc(e.employee||active.employee)}</span></div><button class="btn danger mini revenue-delete-btn" type="button" data-active-revenue-delete="${esc(e.id)}">Xóa lần nhập</button></div>`).join('')}</div></section>`;
+    }).filter(Boolean);
+    return groups.join('');
+  }
+
   renderActive=function(){
     oldRenderActive();
     if(!active||!$('activeEntries'))return;
     const entries=active.entries||[];
     $('activeEntriesEmpty').classList.toggle('hidden',entries.length>0);
-    $('activeEntries').innerHTML=entries.map(e=>`<div class="shift-entry"><div class="shift-entry-head"><div><b>${esc(e.employee||active.employee)}</b><span>${esc(vnTime(e.at))}</span></div><button class="btn danger mini" type="button" data-active-revenue-delete="${esc(e.id)}">Xóa</button></div>${renderEntryValues(e)}</div>`).join('');
+    $('activeEntries').innerHTML=renderRevenueGroups(entries);
     document.querySelectorAll('[data-active-revenue-delete]').forEach(b=>b.onclick=()=>deleteActiveRevenue(b.dataset.activeRevenueDelete));
   };
 
@@ -54,10 +60,10 @@
       if(!pin.trim())return toast('Chưa nhập PIN quản lý');
       auth={pin:pin.trim()};
     }
-    if(!confirm(`Xóa khoản đã cộng nhầm?\n${parts.join(' · ')}\n\nCác tổng của ca sẽ tự tính lại.`))return;
+    if(!confirm(`Xóa lần nhập này?\n${parts.join(' · ')}\n\nCác tổng của ca sẽ tự tính lại.`))return;
     try{
       const d=await callDeleteActive(id,auth);
-      active=rowToActive(d.active);renderActive();await refreshSummary();if(managerPin)refreshManager();toast('Đã xóa khoản doanh thu và tính lại tổng');
+      active=rowToActive(d.active);renderActive();await refreshSummary();if(managerPin)refreshManager();toast('Đã xóa lần nhập và tính lại tổng');
     }catch(err){toast(err.message||'Không xóa được doanh thu')}
   }
 
