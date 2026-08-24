@@ -6,9 +6,9 @@
   const CATEGORY_DEFS=[
     {key:'transfer',label:'Chuyển khoản'},
     {key:'cash',label:'Tiền mặt'},
+    {key:'onlineRevenue',label:'Lịch Oline'},
     {key:'courtRevenue',label:'Doanh thu sân'},
-    {key:'waterRevenue',label:'Doanh thu nước'},
-    {key:'onlineRevenue',label:'Lịch Oline'}
+    {key:'waterRevenue',label:'Doanh thu nước'}
   ];
   const revenueCells=e=>CATEGORY_DEFS.map(c=>[c.label,e?.[c.key]]).filter(([,v])=>Number(v));
 
@@ -95,7 +95,7 @@
       outsideRows=await rest(`staff_revenue_entries?select=id,created_at,employee,transfer,cash,court_revenue,water_revenue,online_revenue,shift_name&date_key=eq.${encodeURIComponent(date)}&order=created_at.desc`)||[];
       $('outsideRevenueEmpty').classList.toggle('hidden',outsideRows.length>0);
       $('outsideRevenueList').innerHTML=outsideRows.map(r=>{
-        const cells=[['Chuyển khoản',r.transfer],['Tiền mặt',r.cash],['Doanh thu sân',r.court_revenue],['Doanh thu nước',r.water_revenue],['Lịch Oline',r.online_revenue]].filter(([,v])=>Number(v));
+        const cells=[['Chuyển khoản',r.transfer],['Tiền mặt',r.cash],['Lịch Oline',r.online_revenue],['Doanh thu sân',r.court_revenue],['Doanh thu nước',r.water_revenue]].filter(([,v])=>Number(v));
         return `<div class="row"><div class="row-main"><b>${esc(vnTime(r.created_at))} · ${esc(r.employee||'Nhân viên')}</b><div class="shift-entry-grid">${cells.map(([label,value])=>`<div class="shift-entry-cell"><span>${label}</span><b>${money(value)}</b></div>`).join('')}</div></div><div class="row-actions"><button class="btn danger mini" type="button" data-outside-revenue-delete="${esc(r.id)}">Xóa</button></div></div>`;
       }).join('');
       document.querySelectorAll('[data-outside-revenue-delete]').forEach(b=>b.onclick=()=>deleteOutsideRevenue(b.dataset.outsideRevenueDelete));
@@ -104,7 +104,7 @@
 
   async function deleteOutsideRevenue(id){
     const r=outsideRows.find(x=>String(x.id)===String(id));if(!r)return;
-    const p=[['Chuyển khoản',r.transfer],['Tiền mặt',r.cash],['Doanh thu sân',r.court_revenue],['Doanh thu nước',r.water_revenue],['Lịch Oline',r.online_revenue]].filter(([,v])=>Number(v)).map(([label,value])=>`${label} ${money(value)}`);
+    const p=[['Chuyển khoản',r.transfer],['Tiền mặt',r.cash],['Lịch Oline',r.online_revenue],['Doanh thu sân',r.court_revenue],['Doanh thu nước',r.water_revenue]].filter(([,v])=>Number(v)).map(([label,value])=>`${label} ${money(value)}`);
     if(!confirm(`Xóa khoản doanh thu ngoài ca đã nhập nhầm?\n${p.join(' · ')}`))return;
     try{await activeApi({action:'delete_outside_entry',id:String(id)});await Promise.all([refreshOutsideRevenue(),refreshSummary()]);if(managerPin)refreshManager();toast('Đã xóa khoản doanh thu ngoài ca')}catch(err){toast(err.message||'Không xóa được doanh thu')}
   }
