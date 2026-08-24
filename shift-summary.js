@@ -27,8 +27,8 @@
   }
 
   function loadFeature(src,key){if(document.querySelector(`script[data-feature="${key}"]`))return;const s=document.createElement('script');s.src=src;s.dataset.feature=key;document.body.appendChild(s)}
-  loadFeature('./attendance-collapse.js?v=30','attendance-collapse');
-  loadFeature('./debt-edit.js?v=30','debt-edit');
-  loadFeature('./shift-entries-collapse.js?v=30','shift-entries-collapse');
-  loadFeature('./online-revenue.js?v=30','online-revenue');
+  loadFeature('./attendance-collapse.js?v=32','attendance-collapse');
+  loadFeature('./debt-edit.js?v=32','debt-edit');
+  loadFeature('./shift-entries-collapse.js?v=32','shift-entries-collapse');
+  loadFeature('./online-revenue.js?v=32','online-revenue');
 })();
