@@ -12,6 +12,20 @@
   ];
   const revenueCells=e=>CATEGORY_DEFS.map(c=>[c.label,e?.[c.key]]).filter(([,v])=>Number(v));
 
+  function mountGroupStyles(){
+    if(document.getElementById('revenueGroupStyles'))return;
+    const s=document.createElement('style');s.id='revenueGroupStyles';s.textContent=`
+      #activeEntries{gap:12px}
+      .revenue-group{overflow:hidden;border:1px solid #cfe3df;border-radius:14px;background:#fff}
+      .revenue-group-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;background:#eaf3f1}
+      .revenue-group-head b{font-size:16px}.revenue-group-head strong{font-size:16px;white-space:nowrap}
+      .revenue-group-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:11px 14px;border-top:1px solid #e4ecea}
+      .revenue-group-info{display:grid;gap:3px}.revenue-group-info b{font-size:14px}.revenue-group-info span{font-size:12px;color:#6b7774}
+      .revenue-delete-btn{white-space:nowrap}
+      @media(max-width:640px){.revenue-group-head{padding:11px 12px}.revenue-group-head b,.revenue-group-head strong{font-size:15px}.revenue-group-row{padding:10px 12px}.revenue-delete-btn{font-size:10.5px;padding:7px 8px}}
+    `;document.head.appendChild(s);
+  }
+
   function applyRevenueLabels(){
     const court=$('qCourt')?.closest('label')?.querySelector('span');
     const water=$('qWater')?.closest('label')?.querySelector('span');
@@ -31,6 +45,7 @@
 
   renderActive=function(){
     oldRenderActive();
+    mountGroupStyles();
     if(!active||!$('activeEntries'))return;
     const entries=active.entries||[];
     $('activeEntriesEmpty').classList.toggle('hidden',entries.length>0);
@@ -99,7 +114,7 @@
   const oldRefreshSummary=refreshSummary;
   refreshSummary=async function(){await oldRefreshSummary();if($('outsideRevenueList'))refreshOutsideRevenue()};
 
-  function bootDelete(){applyRevenueLabels();mountOutsideHistory();refreshOutsideRevenue();if(active)renderActive()}
+  function bootDelete(){mountGroupStyles();applyRevenueLabels();mountOutsideHistory();refreshOutsideRevenue();if(active)renderActive()}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bootDelete);else bootDelete();
 })();
 
