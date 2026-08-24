@@ -3,8 +3,8 @@
   function fullShiftSummary(r){
     const transfer=Number(r?.transfer||0),cash=Number(r?.cash||0),court=Number(r?.court_revenue||0),water=Number(r?.water_revenue||0),online=Number(r?.online_revenue||0);
     const collected=Number.isFinite(Number(r?.collected_total))?Number(r.collected_total):transfer+cash;
-    const revenue=Number.isFinite(Number(r?.revenue_total))?Number(r.revenue_total):court+water+online;
-    const diff=Number.isFinite(Number(r?.difference))?Number(r.difference):collected-revenue;
+    const revenue=court+water;
+    const diff=collected-revenue;
     return {transfer,cash,court,water,online,collected,revenue,diff};
   }
 
@@ -48,8 +48,8 @@
     s.dataset.feature=key;
     document.body.appendChild(s);
   }
-  loadFeature('./attendance-collapse.js?v=26','attendance-collapse');
-  loadFeature('./debt-edit.js?v=26','debt-edit');
-  loadFeature('./shift-entries-collapse.js?v=26','shift-entries-collapse');
-  loadFeature('./online-revenue.js?v=26','online-revenue');
+  loadFeature('./attendance-collapse.js?v=28','attendance-collapse');
+  loadFeature('./debt-edit.js?v=28','debt-edit');
+  loadFeature('./shift-entries-collapse.js?v=28','shift-entries-collapse');
+  loadFeature('./online-revenue.js?v=28','online-revenue');
 })();
