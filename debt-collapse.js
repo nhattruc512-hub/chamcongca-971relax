@@ -18,12 +18,13 @@
     btn.id='debtCollapseBtn';
     btn.type='button';
     btn.className='btn subtle mini';
-    btn.textContent='THU GỌN';
-    btn.setAttribute('aria-expanded','true');
+    btn.textContent='MỞ RỘNG';
+    btn.setAttribute('aria-expanded','false');
     controls.appendChild(btn);
 
     const body=document.createElement('div');
     body.id='debtHistoryBody';
+    body.classList.add('hidden');
     list.parentNode.insertBefore(body,list);
     body.appendChild(list);
     body.appendChild(empty);
