@@ -6,8 +6,9 @@
   const revenueCells=e=>[
     ['Chuyển khoản',e.transfer],
     ['Tiền mặt',e.cash],
-    ['Doanh thu sân (lịch đặt, vé social, thuê...)',e.courtRevenue],
-    ['Doanh thu nước (phụ kiện, bánh, kem,...)',e.waterRevenue]
+    ['Doanh thu sân',e.courtRevenue],
+    ['Doanh thu nước',e.waterRevenue],
+    ['Lịch Oline',e.onlineRevenue]
   ].filter(([,v])=>Number(v));
   const renderEntryValues=e=>{
     const cells=revenueCells(e);
@@ -27,9 +28,7 @@
     if(!active||!$('activeEntries'))return;
     const entries=active.entries||[];
     $('activeEntriesEmpty').classList.toggle('hidden',entries.length>0);
-    $('activeEntries').innerHTML=entries.map(e=>{
-      return `<div class="shift-entry"><div class="shift-entry-head"><div><b>${esc(e.employee||active.employee)}</b><span>${esc(vnTime(e.at))}</span></div><button class="btn danger mini" type="button" data-active-revenue-delete="${esc(e.id)}">Xóa</button></div>${renderEntryValues(e)}</div>`;
-    }).join('');
+    $('activeEntries').innerHTML=entries.map(e=>`<div class="shift-entry"><div class="shift-entry-head"><div><b>${esc(e.employee||active.employee)}</b><span>${esc(vnTime(e.at))}</span></div><button class="btn danger mini" type="button" data-active-revenue-delete="${esc(e.id)}">Xóa</button></div>${renderEntryValues(e)}</div>`).join('');
     document.querySelectorAll('[data-active-revenue-delete]').forEach(b=>b.onclick=()=>deleteActiveRevenue(b.dataset.activeRevenueDelete));
   };
 
@@ -43,7 +42,7 @@
   async function deleteActiveRevenue(id){
     const e=(active?.entries||[]).find(x=>String(x.id)===String(id));
     if(!e)return toast('Không tìm thấy khoản doanh thu');
-    const parts=[];if(e.transfer)parts.push(`CK ${money(e.transfer)}`);if(e.cash)parts.push(`TM ${money(e.cash)}`);if(e.courtRevenue)parts.push(`Sân ${money(e.courtRevenue)}`);if(e.waterRevenue)parts.push(`Nước ${money(e.waterRevenue)}`);
+    const parts=revenueCells(e).map(([label,value])=>`${label} ${money(value)}`);
     let auth={};
     if(typeof isOwner==='function'&&isOwner()){
       const o=typeof owner==='function'?owner():null;
@@ -55,10 +54,10 @@
       if(!pin.trim())return toast('Chưa nhập PIN quản lý');
       auth={pin:pin.trim()};
     }
-    if(!confirm(`Xóa khoản đã cộng nhầm?\n${parts.join(' · ')}\n\nTổng doanh thu của ca sẽ tự trừ lại.`))return;
+    if(!confirm(`Xóa khoản đã cộng nhầm?\n${parts.join(' · ')}\n\nCác tổng của ca sẽ tự tính lại.`))return;
     try{
       const d=await callDeleteActive(id,auth);
-      active=rowToActive(d.active);renderActive();await refreshSummary();if(managerPin)refreshManager();toast('Đã xóa khoản doanh thu và trừ lại tổng');
+      active=rowToActive(d.active);renderActive();await refreshSummary();if(managerPin)refreshManager();toast('Đã xóa khoản doanh thu và tính lại tổng');
     }catch(err){toast(err.message||'Không xóa được doanh thu')}
   }
 
@@ -72,11 +71,11 @@
     if(!$('outsideRevenueList'))return;
     const date=$('summaryDate')?.value||localDateKey();
     try{
-      outsideRows=await rest(`staff_revenue_entries?select=id,created_at,employee,transfer,cash,court_revenue,water_revenue,shift_name&date_key=eq.${encodeURIComponent(date)}&order=created_at.desc`)||[];
+      outsideRows=await rest(`staff_revenue_entries?select=id,created_at,employee,transfer,cash,court_revenue,water_revenue,online_revenue,shift_name&date_key=eq.${encodeURIComponent(date)}&order=created_at.desc`)||[];
       $('outsideRevenueEmpty').classList.toggle('hidden',outsideRows.length>0);
       $('outsideRevenueList').innerHTML=outsideRows.map(r=>{
-        const p=[];if(r.transfer)p.push(`CK ${money(r.transfer)}`);if(r.cash)p.push(`TM ${money(r.cash)}`);if(r.court_revenue)p.push(`Sân ${money(r.court_revenue)}`);if(r.water_revenue)p.push(`Nước ${money(r.water_revenue)}`);
-        return `<div class="row"><div class="row-main"><b>${esc(vnTime(r.created_at))} · ${esc(r.employee||'Nhân viên')}</b><span>${p.join(' · ')}</span></div><div class="row-actions"><button class="btn danger mini" type="button" data-outside-revenue-delete="${esc(r.id)}">Xóa</button></div></div>`;
+        const cells=[['Chuyển khoản',r.transfer],['Tiền mặt',r.cash],['Doanh thu sân',r.court_revenue],['Doanh thu nước',r.water_revenue],['Lịch Oline',r.online_revenue]].filter(([,v])=>Number(v));
+        return `<div class="row"><div class="row-main"><b>${esc(vnTime(r.created_at))} · ${esc(r.employee||'Nhân viên')}</b><div class="shift-entry-grid">${cells.map(([label,value])=>`<div class="shift-entry-cell"><span>${label}</span><b>${money(value)}</b></div>`).join('')}</div></div><div class="row-actions"><button class="btn danger mini" type="button" data-outside-revenue-delete="${esc(r.id)}">Xóa</button></div></div>`;
       }).join('');
       document.querySelectorAll('[data-outside-revenue-delete]').forEach(b=>b.onclick=()=>deleteOutsideRevenue(b.dataset.outsideRevenueDelete));
     }catch(err){console.error(err)}
@@ -84,7 +83,7 @@
 
   async function deleteOutsideRevenue(id){
     const r=outsideRows.find(x=>String(x.id)===String(id));if(!r)return;
-    const p=[];if(r.transfer)p.push(`CK ${money(r.transfer)}`);if(r.cash)p.push(`TM ${money(r.cash)}`);if(r.court_revenue)p.push(`Sân ${money(r.court_revenue)}`);if(r.water_revenue)p.push(`Nước ${money(r.water_revenue)}`);
+    const p=[['Chuyển khoản',r.transfer],['Tiền mặt',r.cash],['Doanh thu sân',r.court_revenue],['Doanh thu nước',r.water_revenue],['Lịch Oline',r.online_revenue]].filter(([,v])=>Number(v)).map(([label,value])=>`${label} ${money(value)}`);
     if(!confirm(`Xóa khoản doanh thu ngoài ca đã nhập nhầm?\n${p.join(' · ')}`))return;
     try{await activeApi({action:'delete_outside_entry',id:String(id)});await Promise.all([refreshOutsideRevenue(),refreshSummary()]);if(managerPin)refreshManager();toast('Đã xóa khoản doanh thu ngoài ca')}catch(err){toast(err.message||'Không xóa được doanh thu')}
   }
