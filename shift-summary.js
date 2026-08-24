@@ -23,33 +23,12 @@
 
   const oldFinish=typeof finishShift==='function'?finishShift:null;
   if(oldFinish){
-    finishShift=async function(){
-      if(!active||!isOwner())return toast('Chỉ máy bắt đầu ca mới được kết thúc');
-      if(!confirm(`Kết thúc ${active.shiftName} của ${active.employee}?`))return;
-      try{
-        const current={...active};
-        const o=owner();
-        const d=await activeApi({action:'finish',id:active.id,token:o.token,note:''});
-        const r=d.completed||{};
-        const s=fullShiftSummary(r);
-        localStorage.removeItem(OWNER_KEY);
-        active=null;
-        renderActive();
-        await refreshAll();
-        alert(`ĐÃ CHỐT ${r.shift_name||current.shiftName}\n\nChuyển khoản: ${money(s.transfer)}\nTiền mặt: ${money(s.cash)}\nLịch Oline: ${money(s.online)}\nDoanh thu sân: ${money(s.court)}\nDoanh thu nước: ${money(s.water)}\n\nTổng tiền thu: ${money(s.collected)}\nTổng doanh thu: ${money(s.revenue)}\nChênh lệch: ${money(s.diff)}`);
-      }catch(e){toast(e.message||'Không kết thúc được ca')}
-    };
+    finishShift=async function(){if(!active||!isOwner())return toast('Chỉ máy bắt đầu ca mới được kết thúc');if(!confirm(`Kết thúc ${active.shiftName} của ${active.employee}?`))return;try{const current={...active};const o=owner();const d=await activeApi({action:'finish',id:active.id,token:o.token,note:''});const r=d.completed||{};const s=fullShiftSummary(r);localStorage.removeItem(OWNER_KEY);active=null;renderActive();await refreshAll();alert(`ĐÃ CHỐT ${r.shift_name||current.shiftName}\n\nChuyển khoản: ${money(s.transfer)}\nTiền mặt: ${money(s.cash)}\nLịch Oline: ${money(s.online)}\nDoanh thu sân: ${money(s.court)}\nDoanh thu nước: ${money(s.water)}\n\nTổng tiền thu: ${money(s.collected)}\nTổng doanh thu: ${money(s.revenue)}\nChênh lệch: ${money(s.diff)}`)}catch(e){toast(e.message||'Không kết thúc được ca')}};
   }
 
-  function loadFeature(src,key){
-    if(document.querySelector(`script[data-feature="${key}"]`))return;
-    const s=document.createElement('script');
-    s.src=src;
-    s.dataset.feature=key;
-    document.body.appendChild(s);
-  }
-  loadFeature('./attendance-collapse.js?v=29','attendance-collapse');
-  loadFeature('./debt-edit.js?v=29','debt-edit');
-  loadFeature('./shift-entries-collapse.js?v=29','shift-entries-collapse');
-  loadFeature('./online-revenue.js?v=29','online-revenue');
+  function loadFeature(src,key){if(document.querySelector(`script[data-feature="${key}"]`))return;const s=document.createElement('script');s.src=src;s.dataset.feature=key;document.body.appendChild(s)}
+  loadFeature('./attendance-collapse.js?v=30','attendance-collapse');
+  loadFeature('./debt-edit.js?v=30','debt-edit');
+  loadFeature('./shift-entries-collapse.js?v=30','shift-entries-collapse');
+  loadFeature('./online-revenue.js?v=30','online-revenue');
 })();
