@@ -2,7 +2,7 @@
 (function(){
   function fullShiftSummary(r){
     const transfer=Number(r?.transfer||0),cash=Number(r?.cash||0),court=Number(r?.court_revenue||0),water=Number(r?.water_revenue||0),online=Number(r?.online_revenue||0);
-    const collected=Number.isFinite(Number(r?.collected_total))?Number(r.collected_total):transfer+cash;
+    const collected=transfer+cash+online;
     const revenue=court+water;
     const diff=collected-revenue;
     return {transfer,cash,court,water,online,collected,revenue,diff};
@@ -36,7 +36,7 @@
         active=null;
         renderActive();
         await refreshAll();
-        alert(`ĐÃ CHỐT ${r.shift_name||current.shiftName}\n\nChuyển khoản: ${money(s.transfer)}\nTiền mặt: ${money(s.cash)}\nDoanh thu sân: ${money(s.court)}\nDoanh thu nước: ${money(s.water)}\nLịch Oline: ${money(s.online)}\n\nTổng tiền thu: ${money(s.collected)}\nTổng doanh thu: ${money(s.revenue)}\nChênh lệch: ${money(s.diff)}`);
+        alert(`ĐÃ CHỐT ${r.shift_name||current.shiftName}\n\nChuyển khoản: ${money(s.transfer)}\nTiền mặt: ${money(s.cash)}\nLịch Oline: ${money(s.online)}\nDoanh thu sân: ${money(s.court)}\nDoanh thu nước: ${money(s.water)}\n\nTổng tiền thu: ${money(s.collected)}\nTổng doanh thu: ${money(s.revenue)}\nChênh lệch: ${money(s.diff)}`);
       }catch(e){toast(e.message||'Không kết thúc được ca')}
     };
   }
@@ -48,8 +48,8 @@
     s.dataset.feature=key;
     document.body.appendChild(s);
   }
-  loadFeature('./attendance-collapse.js?v=28','attendance-collapse');
-  loadFeature('./debt-edit.js?v=28','debt-edit');
-  loadFeature('./shift-entries-collapse.js?v=28','shift-entries-collapse');
-  loadFeature('./online-revenue.js?v=28','online-revenue');
+  loadFeature('./attendance-collapse.js?v=29','attendance-collapse');
+  loadFeature('./debt-edit.js?v=29','debt-edit');
+  loadFeature('./shift-entries-collapse.js?v=29','shift-entries-collapse');
+  loadFeature('./online-revenue.js?v=29','online-revenue');
 })();
