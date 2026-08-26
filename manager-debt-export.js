@@ -8,12 +8,14 @@
   async function exportDebtFullHistory(){
     try{
       const p=range();
-      const [debts,history]=await Promise.all([
+      const [debts,history,edits]=await Promise.all([
         rest('customer_debts?select=*&order=created_at.asc'),
-        rest('customer_debt_history?select=*&order=created_at.asc')
+        rest('customer_debt_history?select=*&order=created_at.asc'),
+        rest('customer_debt_edits?select=*&order=created_at.asc')
       ]);
       const hs=Array.isArray(history)?history:[];
       const ds=Array.isArray(debts)?debts:[];
+      const es=Array.isArray(edits)?edits:[];
       const rows=[];
 
       for(const d of ds){
@@ -28,16 +30,18 @@
             'Nợ ban đầu',
             d.reason||'',
             initialAmount,
-            '',
+            0,
             initialAmount,
             d.employee||'',
             d.shift_name||'Ngoài ca',
             d.settled?'Đã tất toán':'Đang nợ',
-            Number(d.amount||0)
+            Number(d.amount||0),
+            ''
           ]);
         }
         for(const h of own){
           if(!inRangeDate(h.created_at,p.start,p.end))continue;
+          const editCount=es.filter(e=>String(e.history_id||'')===String(h.id)).length;
           rows.push([
             localDateKey(new Date(h.created_at)),
             vnTime(h.created_at),
@@ -50,7 +54,8 @@
             h.employee||'',
             d.shift_name||'Ngoài ca',
             d.settled?'Đã tất toán':'Đang nợ',
-            Number(d.amount||0)
+            Number(d.amount||0),
+            editCount?`Đã chỉnh ${editCount} lần`:''
           ]);
         }
       }
@@ -59,11 +64,11 @@
       if(!rows.length)return toast('Không có lịch sử công nợ trong khoảng đã chọn');
 
       const totalOpen=ds.filter(d=>!d.settled).reduce((s,d)=>s+Number(d.amount||0),0);
-      rows.push(['','','','TỔNG CÔNG NỢ ĐANG MỞ','','','','','','','',totalOpen]);
+      rows.push(['','','','TỔNG CÔNG NỢ ĐANG MỞ','','','','','','','',totalOpen,'']);
       csv(`971-cong-no-lich-su-${p.label}.csv`,[
-        'Ngày','Giờ','Khách hàng','Loại phát sinh','Nội dung nợ','Số tiền phát sinh','Nợ trước','Nợ sau','Nhân viên','Ca','Trạng thái','Tổng nợ hiện tại'
+        'Ngày','Giờ','Khách hàng','Loại phát sinh','Nội dung nợ','Số tiền phát sinh','Nợ trước','Nợ sau','Nhân viên','Ca','Trạng thái','Tổng nợ hiện tại','Ghi chú chỉnh sửa'
       ],rows);
-      toast('Đã xuất đầy đủ lịch sử công nợ');
+      toast('Đã xuất đầy đủ nợ ban đầu và các lần cộng thêm');
     }catch(e){
       console.error(e);
       toast('Không xuất được lịch sử công nợ');
@@ -72,13 +77,17 @@
 
   function mount(){
     const revenueBtn=document.getElementById('exportRevenueBtn');
-    if(!revenueBtn||document.getElementById('exportDebtBtn'))return;
-    const btn=document.createElement('button');
-    btn.id='exportDebtBtn';
-    btn.className='btn primary';
-    btn.type='button';
-    btn.textContent='XUẤT CÔNG NỢ';
-    revenueBtn.after(btn);
+    if(!revenueBtn)return;
+    let btn=document.getElementById('exportDebtBtn');
+    if(!btn){
+      btn=document.createElement('button');
+      btn.id='exportDebtBtn';
+      btn.className='btn primary';
+      btn.type='button';
+      btn.textContent='XUẤT CÔNG NỢ';
+      revenueBtn.after(btn);
+    }
+    // Always override the older exporter loaded by manager-shift-summary.js.
     btn.onclick=exportDebtFullHistory;
   }
 
